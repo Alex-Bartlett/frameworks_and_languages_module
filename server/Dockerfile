@@ -5,6 +5,6 @@
 
 FROM node
 WORKDIR /app/
-RUN npm install express
+RUN npm install express && npm install cors
 COPY . .
 ENTRYPOINT ["node", "app.js"]
