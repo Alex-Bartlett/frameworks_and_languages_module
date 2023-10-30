@@ -1,13 +1,9 @@
+const { log } = require('console');
 const express = require('express')
 const app = express()
 const port = 8000
 
-const data = [
-	{
-		"user_id": "user1234",
-		"name": "Alex"
-	}
-];
+let data = {};
 let lastId = 1;
 
 app.use(express.json());
@@ -17,14 +13,30 @@ app.get('/', (req, res) => {
 })
 
 app.get('/items', (req, res) => {
-	res.status(200).json({ "data": true });
+	res.status(200).json(data.values);
+})
+
+app.get('/item/:id', (req, res) => {
+	if (req.params.id) {
+		const foundData = data[req.params.id];
+		if (foundData) {
+			res.status(200).json(foundData);
+		}
+		else {
+			res.sendStatus(404);
+		}
+	}
+	else {
+		res.sendStatus(400);
+	}
 })
 
 app.post('/item', (req, res) => {
+	// Add proper data validation here
 	if (req.body.user_id) {
 		let obj = req.body;
 		obj.id = lastId;
-		data.push(req.body);
+		data[lastId] = obj;
 		lastId++;
 		res.status(201).json(obj);
 	} else {
@@ -37,5 +49,5 @@ app.delete('/', (req, res) => {
 })
 
 app.listen(port, () => {
-	console.log(`Example app listening on port ${port}`)
+	console.log(`Example app listening on port ${port}`);
 })
