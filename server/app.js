@@ -20,21 +20,6 @@ app.get('/items', (req, res) => {
 	res.status(200).json({ "data": true });
 })
 
-app.get('/item/:id', (req, res) => {
-	if (req.params.id) {
-		const foundData = data.find({ "id": req.params.id });
-		if (foundData) {
-			res.status(200).json();
-		}
-		else {
-			res.sendStatus(404);
-		}
-	}
-	else {
-		res.sendStatus(400);
-	}
-})
-
 app.post('/item', (req, res) => {
 	if (req.body.user_id) {
 		let obj = req.body;
