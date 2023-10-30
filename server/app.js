@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/items', (req, res) => {
-	res.status(200).json(data.values);
+	res.status(200).json(Object.values(data));
 })
 
 app.get('/item/:id', (req, res) => {
@@ -44,7 +44,17 @@ app.post('/item', (req, res) => {
 	}
 })
 
-app.delete('/', (req, res) => {
+app.delete('/item/:id', (req, res) => {
+	if (req.params.id) {
+		const foundData = data[req.params.id];
+		if (foundData) {
+			delete data[req.params.id];
+			res.sendStatus(204);
+		}
+		else {
+			res.sendStatus(404);
+		}
+	}
 	res.sendStatus(405);
 })
 
