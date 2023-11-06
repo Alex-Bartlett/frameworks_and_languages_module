@@ -40,6 +40,15 @@ app.post('/item', (req, res) => {
 		obj.id = lastId;
 		data[lastId] = obj;
 		lastId++;
+
+		/**
+		 * Required date format can be created by using toISOString() on a date object
+		 * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+		 */
+		obj.date_from = new Date().toISOString();
+		if (!obj.date_to) {
+			obj.date_to = date_from; // To prevent repetition, use the same date generated above.
+		}
 		res.status(201).json(obj);
 	} else {
 		res.sendStatus(405);
