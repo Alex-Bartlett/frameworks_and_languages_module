@@ -81,6 +81,7 @@ app.delete('/item/:id', (req, res) => {
 			res.sendStatus(404);
 		}
 	}
+	// ID parameter not supplied
 	res.sendStatus(405);
 })
 
