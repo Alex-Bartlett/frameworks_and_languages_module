@@ -2,7 +2,7 @@
     "keyboard.layout": "00000809",
     "workbench.startupEditor": "none",
     "workbench.panel.defaultLocation": "right",
-    "editor.renderWhitespace": "all",
+    "editor.renderWhitespace": "none",
     "editor.renderControlCharacters": true,
     "editor.bracketPairColorization.enabled": true,
     "extensions.ignoreRecommendations": true,
