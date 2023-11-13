@@ -1,0 +1,65 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free-cycle</title>
+</head>
+
+<body>
+  <script type="importmap">
+  {
+    "imports": {
+      "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+    }
+  }
+  </script>
+
+  <div id="app">
+    {{ message }}
+    <form action="submit" @submit.prevent="postForm">
+      <input v-model="form.user_id" type="text" name="user-id" placeholder="User ID">
+      <input v-model="form.keywords" type="text" name="keywords" placeholder="Keyword1, Keyword2, etc">
+      <input v-model="form.description" type="text" name="description" placeholder="Description">
+      <input v-model="form.image" type="text" name="image" placeholder="Image URL">
+      <input v-model="form.lat" type="text" name="latitude" placeholder="Latitude">
+      <input v-model="form.lon" type="text" name="longitude" placeholder="Longitude">
+      <input v-model="form.date_from" type="text" name="date-from" placeholder="Date from">
+      <input v-model="form.date_to" type="text" name="date-to" placeholder="Date to">
+      <button @click="postForm">Add</button>
+    </form>
+    {{form}}
+  </div>
+
+  <script type="module">
+    import { createApp, ref, reactive } from 'vue'
+
+    createApp({
+      data() {
+        const message = ref('Hello Vue!')
+        const form = reactive({
+          user_id: "",
+          keywords: "",
+          description: "",
+          image: "",
+          lat: "",
+          lon: "",
+          date_from: "",
+          date_to: "",
+        })
+        return {
+          message,
+          form
+        }
+      },
+      methods: {
+        postForm() {
+          alert("pressed");
+        }
+      }
+    }).mount('#app')
+  </script>
+
+</body>
+
+</html>
