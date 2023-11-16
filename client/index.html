@@ -114,6 +114,16 @@
 						.then((json) => { this.items = json })
 						.catch((err) => console.log("Error:", err));
 				},
+				deleteItem(id) {
+					fetch(`${urlAPI}/item/${id}`, {
+						method: "DELETE",
+					})
+						.then(response => {
+							console.log(response);
+							this.getItems()
+						})
+						.catch(err => console.log("Error:", err))
+				},
 			},
 			created() {
 				this.getItems()
