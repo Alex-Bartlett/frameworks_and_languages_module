@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -25,9 +26,8 @@
 			<input v-model="form.lon" type="text" name="longitude" placeholder="Longitude" />
 			<input v-model="form.date_from" type="text" name="date-from" placeholder="Date from" />
 			<input v-model="form.date_to" type="text" name="date-to" placeholder="Date to" />
-			<button @click="postItem">Add</button>
+			<input type="submit" value="Add" />
 		</form>
-		<!-- Need to get items after post -->
 		{{items}}
 		<div>
 			<b>API Connection Status: </b>
@@ -49,6 +49,9 @@
 		// Verify urlAPI has value before attempting to call methods upon it
 		if (urlAPI) {
 			urlAPI.replace(/\/$/, "");
+			// if (urlAPI.endsWith("/")) {
+			// 	urlAPI = urlAPI.substring(0, urlAPI.length - 1)
+			// }
 		}
 
 		createApp({
@@ -63,7 +66,7 @@
 					date_from: "",
 					date_to: "",
 				});
-				let items = [];
+				let items = {};
 				return {
 					form,
 					items,
@@ -78,7 +81,10 @@
 						body: JSON.stringify(this.form),
 					})
 						.then((response) => response.json())
-						.then((json) => console.log("Post sent the following: ", json))
+						.then((json) => {
+							console.log("Post sent the following: ", JSON.stringify(json));
+							this.getItems();
+						})
 						.catch((err) => console.log("Error:", err, this.form));
 				},
 				getItems() {
@@ -87,9 +93,12 @@
 						headers: { "Content-Type": "application/json" },
 					})
 						.then((response) => response.json())
-						.then((json) => console.log(items = json))
+						.then((json) => { this.items = json })
 						.catch((err) => console.log("Error:", err, this.form));
 				}
+			},
+			created() {
+				this.getItems()
 			},
 		}).mount("#app");
 	</script>
