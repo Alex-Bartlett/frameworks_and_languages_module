@@ -28,7 +28,25 @@
 			<input v-model="form.date_to" type="text" name="date-to" placeholder="Date to" />
 			<input type="submit" value="Add" />
 		</form>
-		{{items}}
+		<div>
+			<div v-for="item in items">
+				<h2>{{item.user_id}}</h2>
+				<img v-bind:src="item.image" />
+				<p>{{item.description}}</p>
+				<ul>
+					<li v-for="kw in item.keywords">{{kw}}</li>
+				</ul>
+				<div>
+					<div>Lat: {{lat}}</div>
+					<div>Lon: {{lon}}</div>
+				</div>
+				<div>
+					<div>From: {{date_from}}</div>
+					<div>Until: {{date_to}}</div>
+				</div>
+				<button @click="deleteItem(item.id)">Delete</button>
+			</div>
+		</div>
 		<div>
 			<b>API Connection Status: </b>
 			<span v-if="urlAPI" style="color: green;">
@@ -85,7 +103,7 @@
 							console.log("Post sent the following: ", JSON.stringify(json));
 							this.getItems();
 						})
-						.catch((err) => console.log("Error:", err, this.form));
+						.catch((err) => console.log("Error:", err));
 				},
 				getItems() {
 					fetch(urlAPI + "/items", {
@@ -94,8 +112,8 @@
 					})
 						.then((response) => response.json())
 						.then((json) => { this.items = json })
-						.catch((err) => console.log("Error:", err, this.form));
-				}
+						.catch((err) => console.log("Error:", err));
+				},
 			},
 			created() {
 				this.getItems()
