@@ -13,6 +13,14 @@
 		[v-cloak] {
 			display: none
 		}
+
+		ul.custom-list {
+			padding-left: inherit;
+		}
+
+		ul.custom-list>li {
+			list-style: none;
+		}
 	</style>
 	<title>Free-cycle</title>
 </head>
@@ -29,7 +37,7 @@
 	<div id="app" v-cloak>
 		<div class="navbar bg-black bg-opacity-25">
 			<div class="container">
-				<h1 class="my-3">Free-cycle</h1>
+				<h1 class="my-3">Freecycle</h1>
 				<div>
 					<b>API Connection Status: </b>
 					<span v-if="urlAPI" style="color: green;">
@@ -41,7 +49,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="container">
+		<main class="container">
 			<div class="row mt-5">
 				<h2>Create new listing</h2>
 				<form class="container" action="submit" @submit.prevent="postItem">
@@ -49,8 +57,8 @@
 						<div class="col-12 col-md-10 col-lg-8">
 							<div class="row">
 								<div class="col-12 col-md-6 mt-2">
-									<label for="user-id" class="form-label">User ID</label>
-									<input v-model="form.user_id" class="form-control" type="text" name="user-id"
+									<label for="user_id" class="form-label">User ID</label>
+									<input v-model="form.user_id" class="form-control" type="text" name="user_id"
 										placeholder="User ID" />
 								</div>
 								<div class="col-12 col-md-6 mt-2">
@@ -69,129 +77,138 @@
 										placeholder="Image URL" />
 								</div>
 								<div class="col-12 col-md-6 mt-2">
-									<label for="latitude" class="form-label">Latitude</label>
-									<input v-model="form.lat" class="form-control" type="text" name="latitude"
+									<label for="lat" class="form-label">Latitude</label>
+									<input v-model="form.lat" class="form-control" type="text" name="lat"
 										placeholder="Latitude" />
 								</div>
 								<div class="col-12 col-md-6 mt-2">
-									<label for="longitude" class="form-label">Longitude</label>
-									<input v-model="form.lon" class="form-control" type="text" name="longitude"
+									<label for="long" class="form-label">Longitude</label>
+									<input v-model="form.lon" class="form-control" type="text" name="lon"
 										placeholder="Longitude" />
 								</div>
 								<div class="col-12 col-md-6 mt-2">
-									<label for="date-from" class="form-label">Date from</label>
-									<input v-model="form.date_from" class="form-control" type="date" name="date-from"
+									<label for="date_from" class="form-label">Date from</label>
+									<input v-model="form.date_from" class="form-control" type="date" name="date_from"
 										placeholder="Date from" />
 								</div>
 								<div class="col-12 col-md-6 mt-2">
-									<label for="date-to" class="form-label">Date to</label>
-									<input v-model="form.date_to" class="form-control" type="date" name="date-to"
+									<label for="date_to" class="form-label">Date to</label>
+									<input v-model="form.date_to" class="form-control" type="date" name="date_to"
 										placeholder="Date to" />
 								</div>
 							</div>
 						</div>
 					</div>
-					<input class="btn btn-primary mt-3" type="submit" value="Create" />
+					<input class="btn btn-primary mt-3" data-action="create_item" type="submit" value="Create" />
 				</form>
 				<div class="row mt-5">
 					<h2>All listings</h2>
 					<div class="container">
-						<div class="row">
-							<div v-for="item in items" class="col-12 col-sm-6 col-md-4">
-								<h2>{{item.user_id}}</h2>
-								<img v-bind:src="item.image" />
-								<p>{{item.description}}</p>
-								<ul>
-									<li v-for="kw in item.keywords">{{kw}}</li>
-								</ul>
-								<div>
-									<div>Lat: {{lat}}</div>
-									<div>Lon: {{lon}}</div>
+						<ul class="row custom-list">
+							<li v-for="item in items" class="col-12 col-sm-6 col-md-4 list-group-item">
+								<div class="card bg-transparent text-light border-light">
+									<img v-bind:src="item.image" class="card-img-top" data-field="image" />
+									<div class="card-body pb-1">
+										<h2 class="card-title" data-field="user_id"><span data-field="id">{{item.id}}.
+											</span>{{item.user_id}}</h2>
+										<p>{{item.description}}</p>
+										<b>Keywords</b>
+										<ul data-field="keywords">
+											<li v-for="kw in item.keywords.split(',')">{{kw}}</li>
+										</ul>
+									</div>
+									<div class="card-body py-1">
+										<div data-field="lat">Latitude: {{item.lat}}</div>
+										<div data-field="lon">Longitude: {{item.lon}}</div>
+									</div>
+									<div class="card-body py-1">
+										<div data-field="date_from">From: {{item.date_from}}</div>
+										<div data-field="date_to">Until: {{item.date_to}}</div>
+									</div>
+									<div class="card-body">
+										<button @click="deleteItem(item.id)" class="btn btn-danger"
+											data-action="delete">Delete</button>
+									</div>
 								</div>
-								<div>
-									<div>From: {{date_from}}</div>
-									<div>Until: {{date_to}}</div>
-								</div>
-								<button @click="deleteItem(item.id)">Delete</button>
-							</div>
-						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+	</div>
+	</div>
+	</main>
 
-		<script type="module">
-			import { createApp, ref, reactive } from "vue";
+	<script type="module">
+		import { createApp, ref, reactive } from "vue";
 
-			const urlParams = new URLSearchParams(window.location.search);
-			const urlAPI = urlParams.get("api");
+		const urlParams = new URLSearchParams(window.location.search);
+		const urlAPI = urlParams.get("api");
 
-			// Verify urlAPI has value before attempting to call methods upon it
-			if (urlAPI) {
-				urlAPI.replace(/\/$/, "");
-				// if (urlAPI.endsWith("/")) {
-				// 	urlAPI = urlAPI.substring(0, urlAPI.length - 1)
-				// }
-			}
+		// Verify urlAPI has value before attempting to call methods upon it
+		if (urlAPI) {
+			urlAPI.replace(/\/$/, "");
+			// if (urlAPI.endsWith("/")) {
+			// 	urlAPI = urlAPI.substring(0, urlAPI.length - 1)
+			// }
+		}
 
-			createApp({
-				data() {
-					const form = reactive({
-						user_id: "",
-						keywords: "",
-						description: "",
-						image: "",
-						lat: "",
-						lon: "",
-						date_from: "",
-						date_to: "",
-					});
-					let items = {};
-					return {
-						form,
-						items,
-						urlAPI
-					};
-				},
-				methods: {
-					postItem() {
-						fetch(urlAPI + "/item", {
-							method: "POST",
-							headers: { "Content-Type": "application/json" },
-							body: JSON.stringify(this.form),
+		createApp({
+			data() {
+				const form = reactive({
+					user_id: "",
+					keywords: "",
+					description: "",
+					image: "",
+					lat: "",
+					lon: "",
+					date_from: "",
+					date_to: "",
+				});
+				let items = {};
+				return {
+					form,
+					items,
+					urlAPI
+				};
+			},
+			methods: {
+				postItem() {
+					fetch(urlAPI + "/item", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(this.form),
+					})
+						.then((response) => response.json())
+						.then((json) => {
+							console.log("Post sent the following: ", JSON.stringify(json));
+							this.getItems();
 						})
-							.then((response) => response.json())
-							.then((json) => {
-								console.log("Post sent the following: ", JSON.stringify(json));
-								this.getItems();
-							})
-							.catch((err) => console.log("Error:", err));
-					},
-					getItems() {
-						fetch(urlAPI + "/items", {
-							method: "GET",
-							headers: { "Content-Type": "application/json" },
-						})
-							.then((response) => response.json())
-							.then((json) => { this.items = json })
-							.catch((err) => console.log("Error:", err));
-					},
-					deleteItem(id) {
-						fetch(`${urlAPI}/item/${id}`, {
-							method: "DELETE",
-						})
-							.then(response => {
-								console.log(response);
-								this.getItems()
-							})
-							.catch(err => console.log("Error:", err))
-					},
+						.catch((err) => console.log("Error:", err));
 				},
-				created() {
-					this.getItems()
+				getItems() {
+					fetch(urlAPI + "/items", {
+						method: "GET",
+						headers: { "Content-Type": "application/json" },
+					})
+						.then((response) => response.json())
+						.then((json) => { this.items = json })
+						.catch((err) => console.log("Error:", err));
 				},
-			}).mount("#app");
-		</script>
+				deleteItem(id) {
+					fetch(`${urlAPI}/item/${id}`, {
+						method: "DELETE",
+					})
+						.then(response => {
+							console.log(response);
+							this.getItems()
+						})
+						.catch(err => console.log("Error:", err))
+				},
+			},
+			created() {
+				this.getItems()
+			},
+		}).mount("#app");
+	</script>
 </body>
 
 </html>
