@@ -1,14 +1,13 @@
 name: test_client
 
 on:
-  - workflow_dispatch  
+  - workflow_dispatch
   # Disable running on every commit because this job downloaded a 4gb image and github actions have no cache
   #push:
   #  paths:
   #    - '.github/workflows/test_client.yml'
   #    - 'client/**'
   #    - 'test_client/**'
-
 
 jobs:
   test:
@@ -17,8 +16,8 @@ jobs:
       #- name: checkout
       - uses: actions/checkout@main
 
-      #- run: make test_client
-      - run: make test_your_client_with_example_server
+      - run: make test_client
+      #- run: make test_your_client_with_example_server
 
       #- name: upload-artifact test reports
       - uses: actions/upload-artifact@v3
@@ -31,7 +30,7 @@ jobs:
       # https://github.com/marketplace/actions/test-reporting
       #- name: Test Report
       - uses: phoenix-actions/test-reporting@v8
-        id: test-report   # Set ID reference for step
+        id: test-report # Set ID reference for step
         if: always()
         with:
           name: client-junit
