@@ -4,7 +4,7 @@ services:
 
   server:
     build:
-      context: ./server/
+      context: ./new_server/
     expose:
       - 8000
     ports:
