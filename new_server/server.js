@@ -1,4 +1,8 @@
 import Fastify from 'fastify';
+/**
+ * Fastify doesn't natively support cors, must be implemented via an extension
+ * https://github.com/fastify/fastify-cors
+ */
 import cors from '@fastify/cors';
 
 const fastify = Fastify({
@@ -85,6 +89,10 @@ fastify.delete('/item/:id', async function handler(request, reply) {
 })
 
 try {
+	/**
+	 * Host must be specified to expose the app with docker
+	 * https://fastify.dev/docs/latest/Guides/Getting-Started/
+	 */
 	await fastify.listen({ port: 8000, host: '0.0.0.0' })
 } catch (err) {
 	fastify.log.error(err);
