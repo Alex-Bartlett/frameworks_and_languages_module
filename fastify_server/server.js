@@ -92,8 +92,9 @@ fastify.post('/item', async function handler(request, reply) {
 		data[nextId] = newItem;
 		nextId++;
 		// Convert keywords to an array
-		newItem.keywords = body.keywords.split(',');
-
+		if (typeof newItem.keyword === 'string') {
+			newItem.keywords = body.keywords.split(',');
+		}
 		/**
 		 * Required date format can be created by using toISOString() on a date object
 		 * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
