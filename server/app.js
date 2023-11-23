@@ -49,6 +49,9 @@ app.post('/item', (req, res) => {
 		data[lastId] = obj;
 		lastId++;
 
+		// Convert keywords to an array
+		obj.keywords = req.body.keywords.split(',');
+
 		/**
 		 * Required date format can be created by using toISOString() on a date object
 		 * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
