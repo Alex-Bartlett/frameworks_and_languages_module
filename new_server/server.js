@@ -3,7 +3,7 @@ import Fastify from 'fastify';
  * Fastify doesn't natively support cors, must be implemented via an extension
  * https://github.com/fastify/fastify-cors
  */
-import cors from '@fastify/cors';
+
 import fastifyStatic from '@fastify/static'
 /**
  * __dirname is unavailable with ESM, this technique gets the dirname
