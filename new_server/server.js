@@ -1,9 +1,9 @@
 import Fastify from 'fastify';
 /**
- * Fastify doesn't natively support cors, must be implemented via an extension
- * https://github.com/fastify/fastify-cors
+ * Fastify doesn't natively support sending files in a response,
+ * the following package implements a sendFile method
+ * https://github.com/fastify/fastify-static
  */
-
 import fastifyStatic from '@fastify/static'
 /**
  * __dirname is unavailable with ESM, this technique gets the dirname
@@ -25,22 +25,23 @@ fastify.register(fastifyStatic, {
 
 /**
  * Fastify-cors is a pain to get sending a 204 on an options request. Can get around this by manually
- * setting the headers and returning 204 on a preflight request (which options seems to be)
+ * setting the headers and returning 204 on a preflight request
  * https://stackoverflow.com/questions/65557198/how-to-use-fastify-cors-to-enable-just-one-api-to-cross-domain
  */
 fastify.addHook('preHandler', (req, res, done) => {
 	const allowedPaths = ["/", "/item", "/items", "/test"];
-	if (allowedPaths.includes(req.routerPath)) {
+	const isPreflight = /options/i.test(req.method);
+
+	if (allowedPaths.includes(req.routeOptions.url) || isPreflight) {
 		res.header("Access-Control-Allow-Origin", "*");
 		res.header("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
-	}
-
-	const isPreflight = /options/i.test(req.method);
-	if (isPreflight) {
-		return res
-			.header("Access-Control-Allow-Origin", "*")
-			.code(204)
-			.send();
+		res.header("Access-Control-Allow-Headers", "*");
+		// Send 204 on a preflight request (options)
+		if (isPreflight) {
+			return res
+				.code(204)
+				.send();
+		}
 	}
 
 	done();
@@ -90,6 +91,8 @@ fastify.post('/item', async function handler(request, reply) {
 		newItem.id = nextId;
 		data[nextId] = newItem;
 		nextId++;
+		// Convert keywords to an array
+		newItem.keywords = body.keywords.split(',');
 
 		/**
 		 * Required date format can be created by using toISOString() on a date object
