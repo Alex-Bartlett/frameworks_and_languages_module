@@ -4,7 +4,7 @@ services:
 
   server:
     build:
-      context: ./new_server/
+      context: ./fastify_server/
     expose:
       - 8000
     ports:
