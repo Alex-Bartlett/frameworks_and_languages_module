@@ -4,24 +4,61 @@ import Fastify from 'fastify';
  * https://github.com/fastify/fastify-cors
  */
 import cors from '@fastify/cors';
+import fastifyStatic from '@fastify/static'
+/**
+ * __dirname is unavailable with ESM, this technique gets the dirname
+ * https://stackoverflow.com/questions/46745014/alternative-for-dirname-in-node-js-when-using-es6-modules
+ */
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const fastify = Fastify({
 	logger: true
 });
-fastify.register(cors, {});
+
+// Package to send files as the response, used for root
+fastify.register(fastifyStatic, {
+	root: __dirname
+})
+
+
+/**
+ * Fastify-cors is a pain to get sending a 204 on an options request. Can get around this by manually
+ * setting the headers and returning 204 on a preflight request (which options seems to be)
+ * https://stackoverflow.com/questions/65557198/how-to-use-fastify-cors-to-enable-just-one-api-to-cross-domain
+ */
+fastify.addHook('preHandler', (req, res, done) => {
+	const allowedPaths = ["/", "/item", "/items", "/test"];
+	if (allowedPaths.includes(req.routerPath)) {
+		res.header("Access-Control-Allow-Origin", "*");
+		res.header("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
+	}
+
+	const isPreflight = /options/i.test(req.method);
+	if (isPreflight) {
+		return res
+			.header("Access-Control-Allow-Origin", "*")
+			.code(204)
+			.send();
+	}
+
+	done();
+})
+
 
 /**
  * Use an incrementing variable to generate unique ids for items.
  * No chance of duplicates since items are also just a variable
  * and will be cleared when server is stopped.
  */
-let nextId = 0;
-let data = { 1: { name: "Alex", surname: "Bartlett" } };
+let nextId = 1;
+let data = {};
 
 fastify.get('/', async function handler(request, reply) {
-	reply
+	return reply
 		.code(200)
-		.send("Hello world");
+		.sendFile("./docs.html")
 });
 
 fastify.get('/items', async function handler(request, reply) {
@@ -32,7 +69,7 @@ fastify.get('/items', async function handler(request, reply) {
 })
 
 fastify.get('/item/:id', async function handler(request, reply) {
-	const id = request.params;
+	const id = request.params.id;
 	const foundData = data[id];
 	if (foundData) {
 		reply
@@ -48,7 +85,7 @@ fastify.get('/item/:id', async function handler(request, reply) {
 fastify.post('/item', async function handler(request, reply) {
 	const body = request.body;
 	// Add data validation method here instead of (body)
-	if (body) {
+	if (body.user_id) {
 		let newItem = body;
 		newItem.id = nextId;
 		data[nextId] = newItem;
@@ -58,9 +95,9 @@ fastify.post('/item', async function handler(request, reply) {
 		 * Required date format can be created by using toISOString() on a date object
 		 * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
 		 */
-		obj.date_from = new Date().toISOString();
-		if (!obj.date_to) {
-			obj.date_to = obj.date_from; // To prevent repetition, use the same date generated above.
+		newItem.date_from = new Date().toISOString();
+		if (!newItem.date_to) {
+			newItem.date_to = newItem.date_from; // To prevent repetition, use the same date generated above.
 		}
 		reply
 			.code(201)
@@ -72,7 +109,7 @@ fastify.post('/item', async function handler(request, reply) {
 })
 
 fastify.delete('/item/:id', async function handler(request, reply) {
-	const id = request.params;
+	const id = request.params.id;
 	if (data[id]) {
 		/**
 		 * Delete must be used to remove an item since it is a property of an object.
@@ -80,7 +117,8 @@ fastify.delete('/item/:id', async function handler(request, reply) {
 		 */
 		delete data[id];
 		// Item with given ID found and item deleted successfully
-		reply.code(204);
+		reply
+			.code(204);
 	}
 	else {
 		// Item with given ID not found
