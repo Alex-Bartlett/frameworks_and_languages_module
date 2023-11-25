@@ -1,5 +1,6 @@
 <script>
   import { onMount } from "svelte";
+  import Input from "./Input.svelte";
   export let urlAPI;
 
   let items = [];
@@ -64,54 +65,38 @@
   });
 </script>
 
-<main class="has-text-light">
+<main class="has-text-light mx-5 sm:mx-10">
+  <h2 class="text-2xl mb-2">Create new listing</h2>
   <form on:submit|preventDefault={postItem}>
-    <div class="">
-      <label for="user_id" class="label">User ID</label>
-      <input class="control" type="text" name="user_id" placeholder="User ID" />
-    </div>
-    <div class="">
-      <label for="description" class="label">Description</label>
-      <input
-        class="control"
-        type="text"
+    <div>
+      <Input name="user_id" type="text" label="User ID" placeholder="User ID" />
+      <Input
         name="description"
+        type="text"
+        label="Description"
         placeholder="Description"
       />
-    </div>
-    <div class="">
-      <label for="keywords" class="label">Keywords</label>
-      <input
-        class="control"
-        type="text"
+      <Input
         name="keywords"
+        type="text"
+        label="Keywords"
         placeholder="Keyword1, Keyword2, etc"
       />
-    </div>
-    <div class="">
-      <label for="image" class="label">Image URL</label>
-      <input class="control" type="text" name="image" placeholder="Image URL" />
-    </div>
-    <div class="">
-      <label for="lat" class="label">Latitude</label>
-      <input class="control" type="text" name="lat" placeholder="Latitude" />
-    </div>
-    <div class="">
-      <label for="long" class="label">Longitude</label>
-      <input class="control" type="text" name="lon" placeholder="Longitude" />
-    </div>
-    <div class="">
-      <label for="date_from" class="label">Date from</label>
-      <input
-        class="control"
-        type="date"
+      <Input name="image" type="text" label="Image" placeholder="Image URL" />
+      <Input name="lat" type="text" label="Latitude" placeholder="Latitude" />
+      <Input name="lon" type="text" label="Longitude" placeholder="Longitude" />
+      <Input
         name="date_from"
+        type="date"
+        label="Date from"
         placeholder="Date from"
       />
-    </div>
-    <div class="">
-      <label for="date_to" class="label">Date to</label>
-      <input class="control" type="date" name="date_to" placeholder="Date to" />
+      <Input
+        name="date_to"
+        type="date"
+        label="Date to"
+        placeholder="Date tos"
+      />
     </div>
     <input
       class="btn btn-primary mt-3"

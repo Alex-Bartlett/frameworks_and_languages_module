@@ -9,7 +9,7 @@
 </svelte:head>
 
 <header
-  class="flex flex-auto flex-wrap place-content-between items-center px-5 py-5 mb-5 border-b border-zinc-400"
+  class="flex flex-auto flex-wrap place-content-between items-center mx-5 sm:px-5 py-5 mb-5 sm:mb-10 border-b border-zinc-400"
   role="navigation"
 >
   <h1 class="text-4xl">Freecycle</h1>
