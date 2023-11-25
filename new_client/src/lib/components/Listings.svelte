@@ -68,7 +68,7 @@
 <main class="has-text-light mx-5 sm:mx-10">
   <h2 class="text-2xl mb-2">Create new listing</h2>
   <form on:submit|preventDefault={postItem}>
-    <div>
+    <div class="grid gap-4 sm:w-2/3 md:w-auto md:grid-cols-2 lg:w-1/2">
       <Input name="user_id" type="text" label="User ID" placeholder="User ID" />
       <Input
         name="description"
@@ -99,7 +99,7 @@
       />
     </div>
     <input
-      class="btn btn-primary mt-3"
+      class="mt-8 px-8 py-1 rounded-xl border-2 border-orange-500 bg-none hover:bg-orange-500 text-lg font-bold hover:cursor-pointer transition-colors ease-out duration-75"
       data-action="create_item"
       type="submit"
       value="Create"
