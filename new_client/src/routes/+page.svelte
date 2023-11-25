@@ -8,26 +8,19 @@
   <title>Freecycle</title>
 </svelte:head>
 
-<header class="navbar has-background-primary" role="navigation">
-  <div class="navbar-brand">
-    <a href="/" class="navbar-item">
-      <h1 class="title has-text-white">Freecycle</h1>
-    </a>
-  </div>
-  <div class="navbar-menu">
-    <div class="navbar-end">
-      <div class="navbar-item">
-        <span class="">
-          <b>Connection status:</b>
-          {#if api}
-            <span> Connected to {api}</span>
-          {:else}
-            <span> Unconnected</span>
-          {/if}
-        </span>
-      </div>
-    </div>
-  </div>
+<header
+  class="flex flex-auto flex-wrap place-content-between items-center px-5 py-5 mb-5 border-b border-zinc-400"
+  role="navigation"
+>
+  <h1 class="text-4xl">Freecycle</h1>
+  <span class="text-base">
+    <b>Connection status:</b>
+    {#if api}
+      <span class="text-green-400"> Connected to {api}</span>
+    {:else}
+      <span class="text-red-400"> Unconnected</span>
+    {/if}
+  </span>
 </header>
 
 <Listings urlAPI={api} />
