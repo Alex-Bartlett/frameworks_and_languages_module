@@ -1,8 +1,8 @@
 <script>
-  import { page } from "$app/stores";
   import { onMount } from "svelte";
+  export let urlAPI;
+
   let items = [];
-  let urlAPI = $page.url.searchParams.get("api");
 
   function getItems() {
     fetch(urlAPI + "/items", {
