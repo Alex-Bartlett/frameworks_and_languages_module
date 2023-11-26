@@ -2,7 +2,8 @@ FROM node:19 as build
 ENV NODE_ENV=production
 WORKDIR /app/
 COPY package.json .
-RUN npm install
+COPY package-lock.json .
+RUN npm ci
 COPY . ./
 RUN npm run build
 
