@@ -1,0 +1,10 @@
+# Docker doesn't properly install vite without this docker-compose
+# https://stackoverflow.com/questions/75841925/why-is-docker-compose-throwing-vite-not-found-during-the-build
+
+version: '3.9'
+
+services:
+  client:
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
