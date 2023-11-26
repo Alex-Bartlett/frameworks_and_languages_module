@@ -1,7 +1,7 @@
 FROM node:19 as build
 ENV NODE_ENV=production
 WORKDIR /app/
-COPY package*.json .
+COPY package.json .
 RUN npm install
 COPY . ./
 RUN npm run build
