@@ -3,15 +3,62 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		body {
+			padding: 2rem;
+			background-color: #27272a;
+			color: #e2e8f0;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+		a {
+			color: #ff9800
+		}
+		a:visited {
+			color: #ff9800;
+		}
+		li {
+			margin-bottom: 1em;
+		}
+		.hint {
+			font-style: italic;
+			font-size: 0.9em;
+			margin-top: 0.5em;
+		}
+	</style>
 	<title>API | Freecycle</title>
 </head>
 
 <body>
-	<h1>Server</h1>
+	<h1>Freecycle Server</h1>
+	<h2><a href="./openapi.html">OpenAPI Spec</a></h2>
 	<h2>Try these curl commands:</h2>
 	<ul>
-		<li>curl [url]/items</li>
+		<li>curl <span class="url">[url]</span>/items
+			<div class="hint">
+				Returns all items in JSON format.
+			</div>
+		</li>
+		<li>curl -X POST <span class="url">/item</span> -H "Content-Type: application/json" -d '{"user_id": "Item123", "keywords": ["Example", "Item", "Listing"], "description": "An example item listing", "lat": 51.2798438, "lon": 1.0830275}'
+			<div class="hint">
+				Creates a new listing with the given data. Returns the new item in JSON format on success.
+			</div>
+		</li>
+		<li>curl -X DELETE <span class="url">[url]</span>/item/[item id]
+			<div class="hint">
+				Deletes the item with the given id.
+			</div>
+		</li>
 	</ul>
+	<h2>Visit the <a id="client-url" target="blank" href="">Freecycle client</a></h2>
+	
+	<script>
+		const origin = window.location.origin;
+		for (elem of document.getElementsByClassName('url')) {
+			elem.innerHTML = origin;
+		}
+		const client = origin.replace("8000", "8001");
+		document.getElementById('client-url').setAttribute('href', `${client}/?api=${origin}`);
+	</script>
 </body>
 
 </html>
