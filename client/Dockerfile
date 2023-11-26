@@ -1,5 +1,7 @@
 FROM node:19 as build
-ENV NODE_ENV=production
+# Vite doesn't install when node env is production
+# https://github.com/vitejs/vite/issues/14045
+# ENV NODE_ENV=production
 WORKDIR /app/
 COPY package.json .
 COPY package-lock.json .
