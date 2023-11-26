@@ -12,5 +12,5 @@
   "files.watcherExclude": {
     "**/node_modules": true
   },
-  "cSpell.words": ["fastify"]
+  "cSpell.words": ["fastify", "Freecycle"]
 }

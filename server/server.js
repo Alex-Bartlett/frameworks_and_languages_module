@@ -29,7 +29,7 @@ fastify.register(fastifyStatic, {
  * https://stackoverflow.com/questions/65557198/how-to-use-fastify-cors-to-enable-just-one-api-to-cross-domain
  */
 fastify.addHook('preHandler', (req, res, done) => {
-	const allowedPaths = ["/", "/item", "/items", "/test"];
+	const allowedPaths = ["/", "/item", "/item/:id", "/items", "/test"];
 	const isPreflight = /options/i.test(req.method);
 
 	if (allowedPaths.includes(req.routeOptions.url) || isPreflight) {
