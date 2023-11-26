@@ -4,17 +4,17 @@
 *.zip
 *.pdf
 
-# Mac Cancer
+# Mac
 **/.DS_Store
 
-# Python Cancer
+# Python
 *.py[cod]
 **/.pytest_cache
 **/__pycache__
 
-# npm/javascript Cancer
+# npm/javascript
 **/node_modules
-package-lock.json
+# package-lock.json
 yarn.lock
 
 # generated files for this repo
