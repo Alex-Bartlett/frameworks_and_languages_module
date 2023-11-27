@@ -96,10 +96,12 @@
 	</main>
 	<script>
 		const origin = window.location.origin;
+		// Dynamically set the url for the curl commands
 		for (elem of document.getElementsByClassName('url')) {
 			elem.innerHTML = origin;
 		}
-		const client = origin.replace("8000", "8001");
+		const client = origin.replace("8000", "8001"); // Client uses port 8001, server uses 8000
+		// Dynamically set the path for the client, with api included in the query
 		document.getElementById('client-url').setAttribute('href', `${client}/?api=${origin}`);
 	</script>
 </body>

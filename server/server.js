@@ -24,8 +24,8 @@ fastify.register(fastifyStatic, {
 
 
 /**
- * Fastify-cors is a pain to get sending a 204 on an options request. Can get around this by manually
- * setting the headers and returning 204 on a preflight request
+ * Fastify-cors is a pain to get sending a 204 on an options request. Can get around this by
+ * setting the headers in a preHandler hook and returning 204 on a preflight request
  * https://stackoverflow.com/questions/65557198/how-to-use-fastify-cors-to-enable-just-one-api-to-cross-domain
  */
 fastify.addHook('preHandler', (req, res, done) => {

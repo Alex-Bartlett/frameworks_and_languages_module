@@ -1,7 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import Input from "./Input.svelte";
-  export let urlAPI;
+  export let urlAPI; // urlAPI is given as an attribute of this component (see +page.svelte)
 
   let items = [];
 
@@ -22,12 +22,17 @@
      * https://www.thisdot.co/blog/handling-forms-in-svelte
      */
     const formData = new FormData(e.target);
+    /**
+     * Clear the form input values after submitting
+     * https://stackoverflow.com/questions/73308546/clear-input-field-in-svelte-after-form-submission
+    */
     e.target.reset();
-    let item = {};
 
+    let item = {};
+    // Put form data into expected object format
     for (let field of formData) {
       const [key, value] = field;
-      item[key] = value;
+      item[key] = value; // Key = input name, Value = input value
     }
 
     console.log(JSON.stringify(item));
@@ -60,6 +65,7 @@
 
   onMount(() => {
     console.log(urlAPI);
+    // Only attempt to get items if the api param is supplied
     if (urlAPI) {
       getItems();
     }

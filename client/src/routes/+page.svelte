@@ -1,6 +1,7 @@
 <script>
   import { page } from "$app/stores";
   import Listings from "$lib/components/Listings.svelte";
+  // Retrieve the api parameter from url
   const api = $page.url.searchParams.get("api");
 </script>
 
