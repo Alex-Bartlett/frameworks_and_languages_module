@@ -22,6 +22,7 @@
      * https://www.thisdot.co/blog/handling-forms-in-svelte
      */
     const formData = new FormData(e.target);
+    e.target.reset();
     let item = {};
 
     for (let field of formData) {
