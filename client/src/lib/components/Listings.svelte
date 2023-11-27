@@ -99,7 +99,7 @@
       />
     </div>
     <input
-      class="mt-8 px-8 py-1 rounded-xl border-2 border-orange-500 bg-none hover:bg-orange-500 text-lg font-bold hover:cursor-pointer transition-colors ease-out duration-150"
+      class="mt-8 px-8 py-1 rounded-xl border-2 border-orange-500 bg-none hover:bg-orange-500 focus:bg-orange-500 text-lg font-bold hover:cursor-pointer transition-colors ease-out duration-150"
       data-action="create_item"
       type="submit"
       value="Create"
@@ -147,7 +147,7 @@
               </div>
               <button
                 on:click={deleteItem(item.id)}
-                class="rounded-xl border-2 border-red-500 px-4 py-1 mt-4 hover:bg-red-500 hover:text-white transition-colors ease-out duration-150"
+                class="rounded-xl border-2 border-red-500 px-4 py-1 mt-4 hover:bg-red-500 focus:bg-red-500 transition-colors ease-out duration-150"
                 data-action="delete">Delete</button
               >
             </div>
