@@ -107,52 +107,55 @@
   </form>
 
   <h2 class="text-2xl mt-10 mb-2">Current Listings</h2>
-
-  <ul
-    class="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-  >
-    {#each items as item}
-      <li class="">
-        <div class="rounded-xl bg-zinc-700">
-          {#if item.image}
-            <img
-              src={item.image}
-              alt="Image of {item.user_id}"
-              data-field="image"
-              class="rounded-t-xl"
-            />
-          {/if}
-          <div class="p-4">
-            <h3 class="text-xl" data-field="id">
-              {item.id}<span>. {item.user_id}</span>
-            </h3>
-            <p class="mt-2" data-field="description">{item.description}</p>
-            <div class="font-bold mt-2">Keywords</div>
-            <ul class="list-disc list-inside">
-              {#if item.keywords.length}
-                {#each item.keywords as kw}
-                  <li>{kw}</li>
-                {/each}
-              {:else}
-                <i>None specified </i>
-              {/if}
-            </ul>
-            <div>
-              <b>From:</b>
-              <div data-field="date_from">{item.date_from}</div>
+  {#if items.length}
+    <ul
+      class="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+    >
+      {#each items as item}
+        <li class="">
+          <div class="rounded-xl bg-zinc-700">
+            {#if item.image}
+              <img
+                src={item.image}
+                alt="Image of {item.user_id}"
+                data-field="image"
+                class="rounded-t-xl"
+              />
+            {/if}
+            <div class="p-4">
+              <h3 class="text-xl" data-field="id">
+                {item.id}<span>. {item.user_id}</span>
+              </h3>
+              <p class="mt-2" data-field="description">{item.description}</p>
+              <div class="font-bold mt-2">Keywords</div>
+              <ul class="list-disc list-inside">
+                {#if item.keywords.length}
+                  {#each item.keywords as kw}
+                    <li>{kw}</li>
+                  {/each}
+                {:else}
+                  <i>None specified </i>
+                {/if}
+              </ul>
+              <div>
+                <b>From:</b>
+                <div data-field="date_from">{item.date_from}</div>
+              </div>
+              <div>
+                <b>Until:</b>
+                <div data-field="date_to">{item.date_to}</div>
+              </div>
+              <button
+                on:click={deleteItem(item.id)}
+                class="rounded-xl border-2 border-red-500 px-4 py-1 mt-4 hover:bg-red-500 hover:text-white transition-colors ease-out duration-150"
+                data-action="delete">Delete</button
+              >
             </div>
-            <div>
-              <b>Until:</b>
-              <div data-field="date_to">{item.date_to}</div>
-            </div>
-            <button
-              on:click={deleteItem(item.id)}
-              class="rounded-xl border-2 border-red-500 px-4 py-1 mt-4 hover:bg-red-500 hover:text-white transition-colors ease-out duration-150"
-              data-action="delete">Delete</button
-            >
           </div>
-        </div>
-      </li>
-    {/each}
-  </ul>
+        </li>
+      {/each}
+    </ul>
+  {:else}
+    <i>No listings found</i>
+  {/if}
 </main>
