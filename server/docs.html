@@ -10,15 +10,38 @@
 			color: #e2e8f0;
 			font-family: Arial, Helvetica, sans-serif;
 		}
-		a {
-			color: #ff9800
+
+		h1,
+		h2 {
+			font-weight: normal;
 		}
+
+		h2,
+		p,
+		ul {
+			margin-top: 2rem;
+		}
+
+		a {
+			color: #ff9800;
+		}
+
 		a:visited {
 			color: #ff9800;
 		}
+
+		code {
+			background-color: #3f3f46;
+		}
+
+		ul {
+			padding-inline-start: 1em;
+		}
+
 		li {
 			margin-bottom: 1em;
 		}
+
 		.hint {
 			font-style: italic;
 			font-size: 0.9em;
@@ -29,28 +52,48 @@
 </head>
 
 <body>
-	<h1>Freecycle Server</h1>
-	<h2><a href="./openapi.html">OpenAPI Spec</a></h2>
-	<h2>Try these curl commands:</h2>
-	<ul>
-		<li>curl <span class="url">[url]</span>/items
-			<div class="hint">
-				Returns all items in JSON format.
-			</div>
-		</li>
-		<li>curl -X POST <span class="url">/item</span> -H "Content-Type: application/json" -d '{"user_id": "Item123", "keywords": ["Example", "Item", "Listing"], "description": "An example item listing", "lat": 51.2798438, "lon": 1.0830275}'
-			<div class="hint">
-				Creates a new listing with the given data. Returns the new item in JSON format on success.
-			</div>
-		</li>
-		<li>curl -X DELETE <span class="url">[url]</span>/item/[item id]
-			<div class="hint">
-				Deletes the item with the given id.
-			</div>
-		</li>
-	</ul>
-	<h2>Visit the <a id="client-url" target="blank" href="">Freecycle client</a></h2>
-	
+	<header>
+		<h1>Freecycle Server</h1>
+	</header>
+	<main>
+		<p>This is the server for the Freecycle web app. Here you can access the API and run your own requests. The API
+			follows
+			the <a href="https://en.wikipedia.org/wiki/REST" target="_blank">RESTful architectural style</a>. Try
+			running
+			some
+			requests using the <a href="#curl-commands">example curl commands</a> below.</p>
+		<h2><a id="client-url" target="blank" href="">Freecycle client</a></h2>
+		<h2><a href="./openapi.html">OpenAPI Spec</a></h2>
+		<h2 id="curl-commands">Example curl commands</h2>
+		<ul>
+			<li>
+				<code>
+				curl <span class="url">[url]</span>/items
+			</code>
+				<div class="hint">
+					Returns all items in JSON format.
+				</div>
+			</li>
+			<li>
+				<code>
+				curl -X POST <span class="url">/item</span> -H "Content-Type: application/json" -d '{"user_id": "Item123",
+				"keywords": ["Example", "Item", "Listing"], "description": "An example item listing", "lat": 51.2798438,
+				"lon": 1.0830275}'
+			</code>
+				<div class="hint">
+					Creates a new listing with the given data. Returns the new item in JSON format on success.
+				</div>
+			</li>
+			<li>
+				<code>
+				curl -X DELETE <span class="url">[url]</span>/item/[item id]
+			</code>
+				<div class="hint">
+					Deletes the item with the given id.
+				</div>
+			</li>
+		</ul>
+	</main>
 	<script>
 		const origin = window.location.origin;
 		for (elem of document.getElementsByClassName('url')) {
