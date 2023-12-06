@@ -43,7 +43,7 @@ and more elements are added this way, it will get increasingly harder to find wh
 ### Recommendation
 
 Without the use of frameworks, as is the case for the existing implementation, techniques to improve the readability of the code (e.g. inline javascript) are unavailable,
-thus making harder easier to maintain. Alongside this, the current implementation takes manual approaches to techniques that are centric to many frameworks, such as
+thus making it harder to maintain. Alongside this, the current implementation takes manual approaches to techniques that are centric to many frameworks, such as
 routing. Whilst innovation is important, it's not always necessary to 'reinvent the wheel', and development time could be spent elsewhere rather than designing
 solutions to already solved problems. Frameworks supply features that solve common problems, and often introduce/encourage structure, improving scalability and
 readability (leading to improved maintainability). 
@@ -52,8 +52,6 @@ Server Framework Features
 -------------------------
 
 ### Hooks
-
-(Technical description of the feature - 40ish words)
 
 Fastify's hooks allow you to run tasks upon specific events, such as `preParsing` or `onError`.
 They provide a modular and more performant alternative to middleware, and run in the order of the internal lifecycle.
@@ -76,15 +74,49 @@ like authorization in every request handler method and provides a structure, imp
 - https://progressivecoder.com/how-to-use-fastify-prehandler-hook/
 
 
-### (name of Feature 2)
+### Encapsulation
 
 (Technical description of the feature - 40ish words)
 (A code block snippet example demonstrating the feature)
 (Explain the problem-this-is-solving/why/benefits/problems - 40ish words)
 (Provide reference urls to your sources of information about the feature - required)
 
+Fastify is designed to be modular, with specific functionality being provided by plugins. As part
+of this, it supports encapsulation. This allows for functionality to be context-specific, providing
+encapsulated routes access to only the plugins they needs. This is demonstrated below.
 
-### (name of Feature 3)
+```js
+// Root context
+const fastify = require('fastify')()
+// All contexts have access to this plugin
+fastify.register(require('global-plugin'))
+
+// Child context
+fastify.register(async function childContext (childServer) {
+	// Only this context has access to 'authentication-plugin'
+	childServer.register(require('authentication-plugin'));
+	// Add routes that require authentication
+}
+// Another child context
+fastify.register(async function anotherChildContext (anotherChildServer)) {
+	childServer.register(require('inherited-plugin'))
+	// Grandchild context - encapsulated within anotherChildContext
+	anotherChildContext.register(async function grandchildContext (grandchildServer)) {
+		// Has access to 'inherited-plugin'
+	}
+}
+```
+
+Encapsulation prevents bloat for routes that do not require certain functionality. For example, routes that
+require authentication can have hooks/plugins within their context in which their requests pass through.
+Meanwhile, non-authenticated routes can be placed outside of this context so they don't run through these checks.
+This reduces processing time, notably as the project scales, improving the server response time.
+
+- https://fastify.dev/docs/latest/Reference/Encapsulation
+- https://progressivecoder.com/fastify-plugin-system-encapsulation/
+
+
+### Decorators
 
 (Technical description of the feature - 40ish words)
 (A code block snippet example demonstrating the feature)
