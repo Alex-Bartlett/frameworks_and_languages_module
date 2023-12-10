@@ -1,7 +1,10 @@
 import Fastify from 'fastify';
+
+// Fastify Feature: Plugins
+// https://fastify.dev/docs/latest/Reference/Plugins
 /**
  * Fastify doesn't natively support sending files in a response,
- * the following package implements a sendFile method
+ * the following plugin implements a sendFile method
  * https://github.com/fastify/fastify-static
  */
 import fastifyStatic from '@fastify/static'
@@ -22,7 +25,8 @@ fastify.register(fastifyStatic, {
 	root: __dirname
 })
 
-
+// Fastify Feature: Hooks
+// https://fastify.dev/docs/latest/Reference/Hooks/
 /**
  * Fastify-cors is a pain to get sending a 204 on an options request. Can get around this by
  * setting the headers in a preHandler hook and returning 204 on a preflight request
@@ -56,6 +60,8 @@ fastify.addHook('preHandler', (req, res, done) => {
 let nextId = 1;
 let data = {};
 
+// Fastify Feature: Routes
+// https://fastify.dev/docs/latest/Reference/Routes
 fastify.get('/', async function handler(request, reply) {
 	return reply
 		.code(200)
