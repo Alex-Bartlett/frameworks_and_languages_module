@@ -1,3 +1,5 @@
+// Javascript Feature: Modules
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules
 import Fastify from 'fastify';
 
 // Fastify Feature: Plugins
@@ -9,6 +11,8 @@ import Fastify from 'fastify';
  */
 import fastifyStatic from '@fastify/static'
 
+// Javascript Feature: Destructuring Assignment
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
 /**
  * __dirname is unavailable with ESM, this technique gets the dirname
  * https://stackoverflow.com/questions/46745014/alternative-for-dirname-in-node-js-when-using-es6-modules
@@ -26,8 +30,13 @@ fastify.register(fastifyStatic, {
 	root: __dirname
 })
 
-// Fastify Feature: Hooks
-// https://fastify.dev/docs/latest/Reference/Hooks/
+/** 
+ * Fastify Feature: Hooks
+ * https://fastify.dev/docs/latest/Reference/Hooks/
+ *
+ * Javascript Feature: Arrow Functions
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
+ */
 /**
  * Fastify-cors is a pain to get sending a 204 on an options request. Can get around this by
  * setting the headers in a preHandler hook and returning 204 on a preflight request
@@ -52,7 +61,6 @@ fastify.addHook('preHandler', (req, res, done) => {
 	done();
 })
 
-
 /**
  * Use an incrementing variable to generate unique ids for items.
  * No chance of duplicates since items are also just a variable
@@ -69,6 +77,8 @@ fastify.get('/', async function handler(request, reply) {
 		.sendFile("./docs.html")
 });
 
+// Javascript Feature: Asynchronous Functions
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function
 fastify.get('/items', async function handler(request, reply) {
 	reply
 		.code(200)

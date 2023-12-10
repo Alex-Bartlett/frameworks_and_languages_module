@@ -9,6 +9,8 @@
 	let items = [];
 
 	function getItems() {
+		// Javascript Feature: Promises
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
 		fetch(urlAPI + "/items", {
 			method: "GET",
 			headers: { "Content-Type": "application/json" },
@@ -56,6 +58,8 @@
 	}
 
 	function deleteItem(id) {
+		// Javascript Feature: Template Literals
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
 		fetch(`${urlAPI}/item/${id}`, {
 			method: "DELETE",
 		})

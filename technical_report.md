@@ -184,7 +184,7 @@ This prevents the delay in execution caused by methods that call external APIs, 
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop
 https://dev.to/nodedoctors/an-animated-guide-to-nodejs-event-loop-3g62
 
-### (name of Feature 2)
+### Arrow Functions
 
 (Technical description of the feature - 40ish words)
 (A code block snippet example demonstrating the feature)
