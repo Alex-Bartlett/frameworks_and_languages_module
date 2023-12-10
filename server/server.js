@@ -8,6 +8,7 @@ import Fastify from 'fastify';
  * https://github.com/fastify/fastify-static
  */
 import fastifyStatic from '@fastify/static'
+
 /**
  * __dirname is unavailable with ESM, this technique gets the dirname
  * https://stackoverflow.com/questions/46745014/alternative-for-dirname-in-node-js-when-using-es6-modules
