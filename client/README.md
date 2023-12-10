@@ -1,38 +1,38 @@
-# create-svelte
+# Freecycle Client
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+The Freecycle client uses the [Svelte](https://svelte.dev/) framework. It requires an active connection to a Freecycle server, supplied via url query ([see below](#connecting-to-the-server)).
 
-## Creating a project
+## Launch the client
 
-If you're seeing this, you've probably already done this step. Congrats!
+To run the client, run the following:
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+`cd client && npm install && npm run dev -- --host`
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+This will install the necessary packages and start the client locally on port 8001.
 
-## Developing
+## Test the client
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+The client can be tested either using the github workflow `test_client`, or ran manually with the following command:
 
-```bash
-npm run dev
+`make test_client`
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+## Use the client
 
-## Building
+The client provides a frontend for the Freecycle server, and therefore requires an instance of the Freecycle server to be running. The client can then be connected to the server by the following steps:
 
-To create a production version of your app:
+### Connecting to the server
 
-```bash
-npm run build
-```
+1. Run an instance of the Freecycle server ([see documentation](../server/README.md))
+2. Copy the server url (http://localhost:8000 by default)
+3. Append the server url to the client url by setting it to the `api` parameter within the query string.
+	
+	`http://localhost:8001?api=http://localhost:8000`
+4. The client should display *Connected* followed by the server url in the header
 
-You can preview the production build with `npm run preview`.
+### Create a listing
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+Listing can be created by filling out the form, and clicking *create*. The new listing should appear on the page. Apart from *User ID*, all fields are optional.
+
+## Deleting a listing
+
+Listings can be deleted by clicking the *delete* button at the bottom of the listing.

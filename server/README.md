@@ -12,7 +12,7 @@ This will install the necessary packages and start the server locally on port 80
 
 ## Test the server
 
-The server can be tested either using the github workflow `test_client`, or ran manually with the following command:
+The server can be tested either using the github workflow `test_server`, or ran manually with the following command:
 
 `make test_server`
 

@@ -226,7 +226,7 @@ Client Framework Features
 Client Language Features
 ------------------------
 
-### Promises
+### DOM Manipulation
 
 (Technical description of the feature - 40ish words)
 (A code block snippet example demonstrating the feature)
