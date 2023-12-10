@@ -9,7 +9,7 @@ Critique of Server/Client prototype
 ---------------------
 
 ### Overview
-()
+() -- This needs text
 
 ### Not scalable
 
@@ -76,14 +76,9 @@ like authorization in every request handler method and provides a structure, imp
 
 ### Encapsulation
 
-(Technical description of the feature - 40ish words)
-(A code block snippet example demonstrating the feature)
-(Explain the problem-this-is-solving/why/benefits/problems - 40ish words)
-(Provide reference urls to your sources of information about the feature - required)
-
 Fastify is designed to be modular, with specific functionality being provided by plugins. As part
 of this, it supports encapsulation. This allows for functionality to be context-specific, providing
-encapsulated routes access to only the plugins they needs. This is demonstrated below.
+encapsulated routes access to only the plugins they need. This is demonstrated below.
 
 ```js
 // Root context
@@ -116,24 +111,78 @@ This reduces processing time, notably as the project scales, improving the serve
 - https://progressivecoder.com/fastify-plugin-system-encapsulation/
 
 
-### Decorators
+### Schemas & Validation
 
-(Technical description of the feature - 40ish words)
-(A code block snippet example demonstrating the feature)
-(Explain the problem-this-is-solving/why/benefits/problems - 40ish words)
-(Provide reference urls to your sources of information about the feature - required)
 
+Fastify's native schema validation allows for convenenient definition of JSON schemas for request bodies,
+including defining required values, preventing the need to write complicated validation manually. It employs Ajv JSON validator for this, which validates the data and coecerces it into the expected types.
+
+```js
+fastify.addSchema({
+  $id: 'person',
+  type: 'object',
+  properties: {
+    name: { type: 'string' },
+	age: { type: 'number' }
+  }
+})
+
+fastify.post('/', {
+  handler () {},
+  schema: {
+    body: { $ref: 'person#' }
+  }
+})
+```
+
+This solves the need for creating data validation methods on each route that expects a body, since the validation can take place within the schema. It also returns the data in the expected type, reducing opportunity for malformed requests to cause errors with type-specific operations.
+
+- https://www.inkoop.io/blog/express-vs-fastify-in-depth-comparison-of-node-js-frameworks/
+- https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/
+- https://www.npmjs.com/package/ajv
+- https://ajv.js.org/coercion.html
 
 Server Language Features
 -----------------------
 
-### (name of Feature 1)
+### Asynchronous Code Execution
 
-(Technical description of the feature - 40ish words)
-(A code block snippet example demonstrating the feature)
-(Explain the problem-this-is-solving/why/benefits/problems - 40ish words)
-(Provide reference urls to your sources of information about the feature - required)
+With the Node.js runtime, cumbersome tasks that may block the single thread that Javascript executes upon
+can utilise concepts such as async/await to run on another thread. These tasks are handled by the libuv api, which processes them and stores the callback within the event queue (Hu, 2022). Once the callstack for the Javascript thread is empty, the event loop will pick up the the callback and add it to the callstack to be executed.
 
+```js
+let x = 1
+// Takes 1 second to resolve (simulating api request)
+function SlowMethod(){
+	return new Promise(resolve => setTimeout(() => {
+		x++ // Simulating changing data
+		resolve()
+	}), 1000)
+}
+// API get method
+async function GET() {
+	await SlowMethod() // Slow method will be handled by libuv and run in another thread
+	// Flow will continue from here once SlowMethod is complete and callstack is empty
+	console.log(x)
+}
+
+GET() // Outputs 2
+GET() // Outputs 3
+console.log(x); // Outputs 1 - GET functions are still executing, but they do not block the thread
+
+/**
+ * Output: 
+ * 1
+ * 2
+ * 3
+ */
+```
+
+This prevents the delay in execution caused by methods that call external APIs, such as database queries, which would otherwise block the single thread until complete. This way, the server remains responsive during these methods, allowing it to accept simultaneous api requests, and respond to them in the order they are recieved. The above code snippet demonstrates this behaviour.
+
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop
+https://dev.to/nodedoctors/an-animated-guide-to-nodejs-event-loop-3g62
 
 ### (name of Feature 2)
 
@@ -177,7 +226,7 @@ Client Framework Features
 Client Language Features
 ------------------------
 
-### (name of Feature 1)
+### Promises
 
 (Technical description of the feature - 40ish words)
 (A code block snippet example demonstrating the feature)
@@ -198,3 +247,11 @@ Conclusions
 
 (justify why frameworks are recommended - 120ish words)
 (justify which frameworks should be used and why 180ish words)
+
+
+**TODO:**
+- Add permalinks to first section
+- In-text citations and harvard referencing
+
+**QUESTIONS:**
+- Can I cite documentation such as mdn docs
