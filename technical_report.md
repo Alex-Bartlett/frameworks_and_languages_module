@@ -172,12 +172,11 @@ GET(); // Outputs 2
 GET(); // Outputs 3
 console.log(x); // Outputs 1 - GET functions are still executing, but they do not block the thread
 
-/**
- * Output:
- * 1
- * 2
- * 3
- */
+/* Output:
+	1
+ 	2
+ 	3
+*/
 ```
 
 This prevents the delay in execution caused by methods that call external APIs, such as database queries, which would otherwise block the single thread until complete. This way, the server remains responsive during these methods, allowing it to accept simultaneous api requests, and respond to them in the order they are recieved. The above code snippet demonstrates this behaviour.
@@ -210,14 +209,6 @@ Since immutable values cannot change, they help build more predictable and easy 
 ## Client Framework Features
 
 ### Components
-
-- [Svelte vs Vue](https://blog.openreplay.com/svelte-vs-bue--a-comparison/)
-- [No use of virtual DOM](https://svelte.dev/blog/virtual-dom-is-pure-overhead)
-
-(Technical description of the feature - 40ish words)
-(A code block snippet example demonstrating the feature)
-(Explain the problem-this-is-solving/why/benefits/problems - 40ish words)
-(Provide reference urls to your sources of information about the feature - required)
 
 Components are custom UI elements that contain their own markup, run their own logic, and have their own styling (Svelte.dev, n.d.). Properties allow data to be shared with components, which can be accessed via the component's `<script>` tag.
 
@@ -282,8 +273,13 @@ Logic blocks solve multiple problems:
 
 All of the logic blocks reduce the code footprint, giving developers more time to focus on the website's purpose rather than it's functionality.
 
-- https://dev.to/codingmustache/svelte-logic-blocks-18ec#chapter-5
-- https://svelte.dev/docs/logic-blocks#key
+#### References
+
+- Carvajal, J. (2022). Svelte Logic Blocks. [online] DEV Community. Available at: https://dev.to/codingmustache/svelte-logic-blocks-18ec [Accessed 7 Jan. 2024].
+
+- Codingballad (2023). Svelte Logic Block 101. [online] Medium. Available at: https://blog.stackademic.com/svelte-logic-block-101-bb1eb49ecf56 [Accessed 8 Jan. 2024].
+
+- Svelte.dev (n.d.). Logic blocks • Docs • Svelte. [online] svelte.dev. Available at: https://svelte.dev/docs/logic-blocks#await [Accessed 7 Jan. 2024].
 
 ### Reactivity
 
@@ -293,6 +289,38 @@ All of the logic blocks reduce the code footprint, giving developers more time t
 (Provide reference urls to your sources of information about the feature - required)
 
 
+```
+Unlike React, you don't have to declare data changes (i.e., by calling this.setState or the Hooks equivalent) [link](https://blog.logrocket.com/truly-reactive-programming-with-svelte-3-0-321b49b75969/). In Svelte, variables are reactive and are updated via assignment. Using the equals operator on a variable updates the state. This reduces the code footprint.
+Svelte code is compiled topologically (above reference)
+Svelte does not replace values but instead adds update methods to them to update their value and thus their state.
+Mutator methods of variables don't trigger updates, instead the assignment operator is used [link](https://blog.thoughtspile.tech/2023/04/22/svelte-state/)
+```
+
+Reactivity allows for dynamic element values. Unlike most other frameworks that implement reactivity, data changes do not need to be declared (Okeh, 2019). Instead, when compiling .svelte files into JavaScript, Svelte gives mutable variables "update events" (Klepov, 2023). Assignments to these reactive variables call these events, in turn updating the DOM elements that reference them. Svelte also provides reactive statements (declared with `$:`) that run when reactive variables are changed.
+
+```html
+<script>
+	// Mutable, thus reactive variable
+	let x = false;
+
+	function toggle(){
+		// Assignment operation compiles to a call to the variable's update event.
+		x = !x;
+	}
+</script>
+
+<p>X = {x}</p>
+<button on:click={toggle}>Toggle</button>
+
+<!-- Renders to:
+<p>X = false</>
+
+When the button is clicked, the DOM updates to:
+<p>X = true</>
+-->
+```
+
+The significantly smaller code footprint that reactivity brings reduces development time, particularly for applications that deal with data and user interaction. Removing the need to declare data changes attributes to this. The amount of boilerplate that a developer has to write to implement automatic DOM updates in Svelte is next to none, giving more time to focus on the features themselves.
 
 ## Client Language Features
 
@@ -302,6 +330,25 @@ All of the logic blocks reduce the code footprint, giving developers more time t
 (A code block snippet example demonstrating the feature)
 (Explain the problem-this-is-solving/why/benefits/problems - 40ish words)
 (Provide reference urls to your sources of information about the feature - required)
+
+Since JavaScript runs on the browser, it has direct access to the Document Object Model (DOM) through the DOM API (MDN, 2023). This allows JavaScript to manipulate DOM elements, creating, modifying, and deleting them.
+
+```js
+// Access the DOM with the document property
+const newElement = document.createElement('div');
+// Add some text to the element
+newElement.textContent = 'New element';
+// Add the element to the document's body
+document.body.appendChild(newElement);
+
+/* HTML:
+<div>New element</div>
+*/
+```
+
+All major browsers support JavaScript, some exclusively, so other languages result to compiling into JavaScript when making client applications. By being able to modify the document directly, this extra compilation step is not necessary, therefore saving development time. It also prevents the need to understand two languages to build web applications, since JavaScript is the standard.
+
+**NEEDS REFERENCES**
 
 ### Arrow Functions
 
@@ -315,6 +362,8 @@ All of the logic blocks reduce the code footprint, giving developers more time t
 (justify why frameworks are recommended - 120ish words)
 (justify which frameworks should be used and why 180ish words)
 
+Maybe discuss WebAssembly here ^
+
 **TODO:**
 
 - Add permalinks to first section
@@ -323,3 +372,4 @@ All of the logic blocks reduce the code footprint, giving developers more time t
 **QUESTIONS:**
 
 - Can I cite documentation such as mdn docs
+
