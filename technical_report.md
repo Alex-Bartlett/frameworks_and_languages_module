@@ -1,14 +1,12 @@
 # Technical Report
 
-(intro describing purpose of report - 200ish words)
+This report examines the challenges in not using a framework for a web API server and its front-end. Analysing an existing implementation without the use of frameworks, the report looks into the challenges of scalability, readability, and overall maintainability that come with this approach. Subsequent recommendations are provided with demonstrations on how they can solve the issues outlined, and other benefits.
 
-_incomplete_
+Following a new implementation of the example server/client prototype using frameworks, the report explores the features of those used. Fastify, a modern Node.js server framework built for high performance, is used to implement the API. Meanwhile Svelte, a client framework designed for writing minimal yet efficient code, is used for the front-end. These framework offers features that can significantly improve the maintainability of a project as opposed to a framework-less approach.
 
 ## Critique of Server/Client prototype
 
 ### Overview
-
-() -- This needs text
 
 ### Not scalable
 
@@ -24,6 +22,8 @@ ROUTES = (
 )
 ```
 
+[Permalink](https://github.com/Alex-Bartlett/frameworks_and_languages_module/blob/b86f4df653896fcc3d77f8e95909409d9c780e53/example_server/app/server.py#L8)
+
 The route definitions, for example, are not scalable. Every function must be imported, and routes manually assigned. As the API grows, this section will too, affecting readability. Also, each function has to be typed out twice: in the import, and in `ROUTES`. This increases the opportunity for human error.
 
 ### Code separation
@@ -36,11 +36,13 @@ pp.style = "color: red";
 document.body.appendChild(pp);
 ```
 
-Elements are added later via DOM manipulation. This impacts readability, as the html file does not represent the true structure of the page. As the project grows and more elements are added this way, it will get increasingly harder to find where elements are originating from, affecting debugging and overall development time.
+[Permalink](https://github.com/Alex-Bartlett/frameworks_and_languages_module/blob/b86f4df653896fcc3d77f8e95909409d9c780e53/example_client/index.html#L255)
+
+Elements are added later via DOM manipulation. This impacts readability, as the html file does not represent the true structure of the page. As the project grows and more elements are added this way, it will become increasingly difficult to find where elements are originating from, affecting debugging and overall development time.
 
 ### Recommendation
 
-Without the use of frameworks, as is the case for the existing implementation, techniques to improve the readability of the code (e.g. inline javascript) are unavailable, thus making it harder to maintain. Alongside this, the current implementation takes manual approaches to techniques that are centric to many frameworks, such as routing. Whilst innovation is important, it's not always necessary to 'reinvent the wheel', and development time could be spent elsewhere rather than designing solutions to already solved problems. Frameworks supply features that solve common problems, and often introduce/encourage structure, improving scalability and readability (leading to improved maintainability).
+Without frameworks, techniques to improve code readability (e.g. inline javascript) are unavailable, thus making it harder to maintain. Alongside this, the current implementation takes manual approaches to techniques that are centric to many frameworks, such as routing. Whilst innovation is important, it's not always necessary to 'reinvent the wheel', and development time could be spent elsewhere rather than designing solutions to already solved problems. Frameworks supply features that solve common problems, and often introduce/encourage structure, improving scalability and readability (leading to improved maintainability).
 
 ## Server Framework Features
 
@@ -48,7 +50,7 @@ Without the use of frameworks, as is the case for the existing implementation, t
 
 Fastify's hooks allow you to run tasks upon specific events, such as `preParsing` or `onError`.
 They provide a modular and more performant alternative to middleware (Olatunji, 2023), and run in the order of the internal lifecycle (Fastify, n.d.).
-Hooks are provided for the application too, such as `onReady` and `preClose`.
+Application hooks also exist, such as `onReady` and `preClose`.
 
 ```javascript
 fastify.addHook("preParsing", (request, reply, payload, done) => {
@@ -60,7 +62,7 @@ fastify.addHook("preParsing", (request, reply, payload, done) => {
 });
 ```
 
-With hooks, you can intercept data at different stages of the lifecycle, making it "scalable for growing applications" (Dashora, 2022). This allows you to do things such as validate requests or check authorization in one place. This prevents repetition for things like authorization in every request handler method and provides a structure, improving readability and maintainability.
+With hooks, you can intercept data at different stages of the lifecycle, making it "scalable for growing applications" (Dashora, 2022). This allows for things such as validating requests and checking authorization in one place. This prevents repetition for things like authorization in every request handler method and provides a structure, improving readability and maintainability.
 
 #### References
 
@@ -72,8 +74,8 @@ With hooks, you can intercept data at different stages of the lifecycle, making 
 
 ### Encapsulation
 
-Fastify is designed to be modular, using plugins to "extend its functionalities" (Dashora, 2022). As part
-of this, it supports encapsulation. This allows for functionality to be context-specific, providing
+Fastify is designed for modularity, using plugins to "extend its functionalities" (Dashora, 2022). As part
+of this, it supports encapsulation. This allows for context-specific functionality, providing
 encapsulated routes access to only the plugins they need. This is demonstrated below.
 
 ```javascript
@@ -101,7 +103,7 @@ fastify.register(async function anotherChildContext (anotherChildServer)) {
 Encapsulation prevents bloat for routes that do not require certain functionality. For example, routes that
 require authentication can have hooks/plugins within their context in which their requests pass through (Fastify, n.d.).
 Meanwhile, non-authenticated routes can be placed outside of this context so they don't run through these checks.
-This reduces processing time, notably as the project scales, improving the server response time.
+This reduces processing time, particularly as the project scales, improving the server response time.
 
 #### References
 
@@ -111,8 +113,7 @@ This reduces processing time, notably as the project scales, improving the serve
 
 ### Schemas & Validation
 
-Fastify's native schema validation allows for convenenient definition of JSON schemas for request bodies,
-including defining required values, preventing the need to write complicated validation manually. It employs Ajv JSON validator for this (Fastify, n.d.), which validates the data and coecerces it into the expected types (AJV JSON Schema Validator, n.d.).
+Fastify's schema validation allows for JSON schema definitions for request bodies, including defining required values, preventing the need to write complicated validation manually. It employs Ajv JSON validator for this (Fastify, n.d.), which validates the data and coecerces it into the expected types (AJV JSON Schema Validator, n.d.).
 
 ```javascript
 fastify.addSchema({
@@ -146,7 +147,7 @@ This solves the need for creating data validation methods on each route that exp
 
 ### Asynchronous Code Execution
 
-With the Node.js runtime, cumbersome tasks that may block the single thread that JavaScript executes upon can utilise concepts such as async/await to run on another thread. These tasks are handled by the libuv api, which processes them and stores the callback within the event queue (Hu, 2022). Once the callstack for the JavaScript thread is empty, the event loop will pick up the the callback and add it to the call stack to be executed (Devero, 2020).
+With the Node.js runtime, tasks that may block JavaScript's single thread can utilise concepts such as async/await to run on another thread. These tasks are handled by the libuv api, which processes them and stores the callback within the event queue (Hu, 2022). Once the callstack for the JavaScript thread is empty, the event loop will pick up the the callback and add it to the call stack to be executed (Devero, 2020).
 
 ```javascript
 let x = 1;
@@ -219,7 +220,6 @@ Components are custom UI elements that contain their own markup, run their own l
 	export let value;
 </script>
 
-<!--  -->
 <p>Value: {value}</p>
 ```
 
@@ -242,7 +242,7 @@ The framework makes these reusable elements easy to make, significantly reducing
 
 ### Logic blocks
 
-Svelte provides `if`, `each`, `await`, and `key` logic blocks to perform logical operations in the page markup, which HTML alone does not support. `if` allows for conditions, `each` allows for iteration, `await` allows for conditionals for promise states (Carvajal, 2022), and `key` recreates components upon variable changes (Svelte.dev, n.d.). Unlike other frameworks like React that use embedded JavaScript for logic, Svelte compiles the template into "highly optimized JavaScript" (Codingballad, 2023) to reduce the amount of runtime work in for the browser.
+Svelte provides four different logic blocks to perform logical operations in the page markup, which HTML alone does not support. `if` allows for conditions, `each` allows for iteration, `await` allows for conditionals for promise states (Carvajal, 2022), and `key` recreates components upon variable changes (Svelte.dev, n.d.). Unlike other frameworks like React that use embedded JavaScript for logic, Svelte compiles the template into "highly optimized JavaScript" (Codingballad, 2023) to reduce the amount of runtime work in for the browser.
 
 ```svelte
 <script>
@@ -279,19 +279,10 @@ All of the logic blocks reduce the code footprint, giving developers more time t
 #### References
 
 - Carvajal, J. (2022). Svelte Logic Blocks. [online] DEV Community. Available at: https://dev.to/codingmustache/svelte-logic-blocks-18ec [Accessed 7 Jan. 2024].
-
 - Codingballad (2023). Svelte Logic Block 101. [online] Medium. Available at: https://blog.stackademic.com/svelte-logic-block-101-bb1eb49ecf56 [Accessed 8 Jan. 2024].
-
 - Svelte.dev (n.d.). Logic blocks • Docs • Svelte. [online] svelte.dev. Available at: https://svelte.dev/docs/logic-blocks#await [Accessed 7 Jan. 2024].
 
 ### Reactivity
-
-```
-Unlike React, you don't have to declare data changes (i.e., by calling this.setState or the Hooks equivalent) [link](https://blog.logrocket.com/truly-reactive-programming-with-svelte-3-0-321b49b75969/). In Svelte, variables are reactive and are updated via assignment. Using the equals operator on a variable updates the state. This reduces the code footprint.
-Svelte code is compiled topologically (above reference)
-Svelte does not replace values but instead adds update methods to them to update their value and thus their state.
-Mutator methods of variables don't trigger updates, instead the assignment operator is used [link](https://blog.thoughtspile.tech/2023/04/22/svelte-state/)
-```
 
 Reactivity allows for dynamic element values. Unlike most other frameworks that implement reactivity, data changes do not need to be declared (Okeh, 2019). Instead, when compiling .svelte files into JavaScript, Svelte gives mutable variables "update events" (Klepov, 2023). Assignments to these reactive variables call these events, in turn updating the DOM elements that reference them. Svelte also provides reactive statements (declared with `$:`) that run when reactive variables are changed.
 
@@ -329,9 +320,9 @@ The significantly smaller code footprint that reactivity brings reduces developm
 
 ### DOM Manipulation
 
-Since JavaScript runs on the browser, it has direct access to the Document Object Model (DOM) through the DOM API (MDN, 2023). This allows JavaScript to manipulate DOM elements, creating, modifying, and deleting them.
+JavaScript on the browser has direct DOM access through the DOM API (MDN, 2023). This allows JavaScript to manipulate DOM elements, creating, modifying, and deleting them.
 
-```js
+```javascript
 // Access the DOM with the document property
 const newElement = document.createElement("div");
 // Add some text to the element
@@ -344,16 +335,18 @@ document.body.appendChild(newElement);
 */
 ```
 
-All major browsers support JavaScript, some exclusively, so other languages result to compiling into JavaScript when making client applications. By being able to modify the document directly, this extra compilation step is not necessary, therefore saving development time. It also prevents the need to understand two languages to build web applications, since JavaScript is the standard. **this needs work**
+"JavaScript is the client-side scripting language that connects to the DOM in an internet browser" (Rascia, 2017), so other languages result to compiling into JavaScript when making client applications. By being able to modify the document directly, this extra compilation step is not necessary, therefore saving development time.
 
-**NEEDS REFERENCES**
-maybe look at this https://www.digitalocean.com/community/tutorial-series/understanding-the-dom-document-object-model
+#### References
+
+- MDN (2023). Using the Document Object Model - Web APIs | MDN. [online] developer.mozilla.org. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Document_object_model/Using_the_Document_Object_Model#what_does_the_document_api_do [Accessed 8 Jan. 2024].
+- Rascia, T. (2017). Introduction to the DOM | DigitalOcean. [online] www.digitalocean.com. Available at: https://www.digitalocean.com/community/tutorials/introduction-to-the-dom [Accessed 8 Jan. 2024].
 
 ### Arrow Functions
 
 Arrow functions are a shorthand syntax for declaring anonymous functions. They support implicit returns where the "statement is straightforward" (Arianna, 2022), and explicit returns for multi-line expressions. Arrow functions have "lexical this" (Rascia, 2021), in which they share the `this` scope of the level above themselves.
 
-```js
+```javascript
 // Implicit return
 let sum = (a, b) => a + b;
 // Explicit return
@@ -371,16 +364,13 @@ Arrow functions are particularly useful as callback functions and in iterator me
 
 ## Conclusions
 
-(justify why frameworks are recommended - 120ish words)
-(justify which frameworks should be used and why 180ish words)
+Frameworks are tools designed to reduce the amount of code a developer has to write. Whilst a developer is likely capable of creating their own implementations of the features a framework provides, it is not always necessary for every project to do this. Given that frameworks are often open-source, their features are usually very refined and efficient.
 
-Maybe discuss WebAssembly here ^
+Numerous server and client frameworks exist, so choosing the right one for a particular project is a careful process. Once a framework has been implemented, it's not so easy to switch it out for another one later down the line, since their approach to features may differ.
 
-**TODO:**
+Fastify is a suitable server framework for applications with high concurrent users. Its ability to serve up to 30000 requests per second (Fastify, n.d.) puts its ahead of other popular frameworks like Express for this metric. However, most projects do not see these numbers, and in the case of small projects, it is oftentimes best to use a framework for a language the developer is competent with. The same applies for client frameworks, although an argument can be made that due to JavaScript's native support in all popular browsers, it may be suitable more often than not. Yet, other languages increasingly support WebAssembly (Steiner, 2023), such as with the Blazor framework for C#. In conclusion, frameworks that should be used differ based on the type and scale of project, and also the developer/team that is using it.
 
-- Add permalinks to first section
-- In-text citations and harvard referencing
+#### References
 
-**QUESTIONS:**
-
-- Can I cite documentation such as mdn docs
+- Fastify (n.d.). Fast and low overhead web framework, for Node.js | Fastify. [online] fastify.dev. Available at: https://fastify.dev/ [Accessed 9 Jan. 2024].
+- Steiner, T. (2023). What Is WebAssembly and Where Did It Come from? | Articles. [online] web.dev. Available at: https://web.dev/articles/what-is-webassembly.
