@@ -24,8 +24,7 @@ ROUTES = (
 )
 ```
 
-The route definitions, for example, are not scalable. Every function must be imported, and routes manually assigned.
-As the API grows, this section will too, affecting readability. Also, each function has to be typed out twice: in the import, and in `ROUTES`. This increases the opportunity for human error.
+The route definitions, for example, are not scalable. Every function must be imported, and routes manually assigned. As the API grows, this section will too, affecting readability. Also, each function has to be typed out twice: in the import, and in `ROUTES`. This increases the opportunity for human error.
 
 ### Code separation
 
@@ -37,28 +36,23 @@ pp.style = "color: red";
 document.body.appendChild(pp);
 ```
 
-Elements are added later via DOM manipulation. This impacts readability, as the html file does not represent the true structure of the page. As the project grows
-and more elements are added this way, it will get increasingly harder to find where elements are originating from, affecting debugging and overall development time.
+Elements are added later via DOM manipulation. This impacts readability, as the html file does not represent the true structure of the page. As the project grows and more elements are added this way, it will get increasingly harder to find where elements are originating from, affecting debugging and overall development time.
 
 ### Recommendation
 
-Without the use of frameworks, as is the case for the existing implementation, techniques to improve the readability of the code (e.g. inline javascript) are unavailable,
-thus making it harder to maintain. Alongside this, the current implementation takes manual approaches to techniques that are centric to many frameworks, such as
-routing. Whilst innovation is important, it's not always necessary to 'reinvent the wheel', and development time could be spent elsewhere rather than designing
-solutions to already solved problems. Frameworks supply features that solve common problems, and often introduce/encourage structure, improving scalability and
-readability (leading to improved maintainability).
+Without the use of frameworks, as is the case for the existing implementation, techniques to improve the readability of the code (e.g. inline javascript) are unavailable, thus making it harder to maintain. Alongside this, the current implementation takes manual approaches to techniques that are centric to many frameworks, such as routing. Whilst innovation is important, it's not always necessary to 'reinvent the wheel', and development time could be spent elsewhere rather than designing solutions to already solved problems. Frameworks supply features that solve common problems, and often introduce/encourage structure, improving scalability and readability (leading to improved maintainability).
 
 ## Server Framework Features
 
 ### Hooks
 
 Fastify's hooks allow you to run tasks upon specific events, such as `preParsing` or `onError`.
-They provide a modular and more performant alternative to middleware, and run in the order of the internal lifecycle.
+They provide a modular and more performant alternative to middleware (Olatunji, 2023), and run in the order of the internal lifecycle (Fastify, n.d.).
 Hooks are provided for the application too, such as `onReady` and `preClose`.
 
 ```javascript
 fastify.addHook("preParsing", (request, reply, payload, done) => {
-	let newPayload = payload
+	let newPayload = payload;
 	// ...some code (request validation, authorization, etc.)
 
 	// Continue the lifecycle with the new modified payload
@@ -66,18 +60,19 @@ fastify.addHook("preParsing", (request, reply, payload, done) => {
 });
 ```
 
-With hooks, you can intercept data at different stages of the lifecycle. This allows you to do things
-such as validate requests or check authorization in one place. This prevents repetition for things
-like authorization in every request handler method and provides a structure, improving readability and maintainability.
+With hooks, you can intercept data at different stages of the lifecycle, making it "scalable for growing applications" (Dashora, 2022). This allows you to do things such as validate requests or check authorization in one place. This prevents repetition for things like authorization in every request handler method and provides a structure, improving readability and maintainability.
 
-- https://fastify.dev/docs/latest/Reference/Hooks
-- https://fastify.dev/docs/latest/Reference/Lifecycle/
-- https://blog.appsignal.com/2023/05/24/advanced-fastify-hooks-middleware-and-decorators.html
-- https://progressivecoder.com/how-to-use-fastify-prehandler-hook/
+#### References
+
+- Dashora, S. (2022). How to use Fastify PreHandler Hook. [online] Progressive Coder. Available at: https://progressivecoder.com/how-to-use-fastify-prehandler-hook/ [Accessed 10 Dec. 2023].
+
+- Fastify (n.d.). Hooks | Fastify. [online] fastify.dev. Available at: https://fastify.dev/docs/latest/Reference/Hooks/ [Accessed 10 Dec. 2023].
+
+- Olatunji, D. (2023). Advanced Fastify: Hooks, Middleware, and Decorators. [online] AppSignal Blog. Available at: https://blog.appsignal.com/2023/05/24/advanced-fastify-hooks-middleware-and-decorators.html [Accessed 10 Dec. 2023].
 
 ### Encapsulation
 
-Fastify is designed to be modular, with specific functionality being provided by plugins. As part
+Fastify is designed to be modular, using plugins to "extend its functionalities" (Dashora, 2022). As part
 of this, it supports encapsulation. This allows for functionality to be context-specific, providing
 encapsulated routes access to only the plugins they need. This is demonstrated below.
 
@@ -97,24 +92,27 @@ fastify.register(async function childContext (childServer)) {
 fastify.register(async function anotherChildContext (anotherChildServer)) {
 	childServer.register(require('inherited-plugin'))
 	// Grandchild context - encapsulated within anotherChildContext
-	anotherChildContext.register(async function grandchildContext (grandchildServer)) {
+	anotherChildServer.register(async function grandchildContext (grandchildServer)) {
 		// Has access to 'inherited-plugin'
 	}
 }
 ```
 
 Encapsulation prevents bloat for routes that do not require certain functionality. For example, routes that
-require authentication can have hooks/plugins within their context in which their requests pass through.
+require authentication can have hooks/plugins within their context in which their requests pass through (Fastify, n.d.).
 Meanwhile, non-authenticated routes can be placed outside of this context so they don't run through these checks.
 This reduces processing time, notably as the project scales, improving the server response time.
 
-- https://fastify.dev/docs/latest/Reference/Encapsulation
-- https://progressivecoder.com/fastify-plugin-system-encapsulation/
+#### References
+
+- Dashora, S. (2022). Understanding Encapsulation in the Fastify Plugin System. [online] Progressive Coder. Available at: https://progressivecoder.com/fastify-plugin-system-encapsulation/ [Accessed 10 Dec. 2023].
+
+- Fastify (n.d.). Encapsulation | Fastify. [online] fastify.dev. Available at: https://fastify.dev/docs/latest/Reference/Encapsulation/ [Accessed 10 Dec. 2023].
 
 ### Schemas & Validation
 
 Fastify's native schema validation allows for convenenient definition of JSON schemas for request bodies,
-including defining required values, preventing the need to write complicated validation manually. It employs Ajv JSON validator for this, which validates the data and coecerces it into the expected types.
+including defining required values, preventing the need to write complicated validation manually. It employs Ajv JSON validator for this (Fastify, n.d.), which validates the data and coecerces it into the expected types (AJV JSON Schema Validator, n.d.).
 
 ```javascript
 fastify.addSchema({
@@ -134,19 +132,21 @@ fastify.post("/", {
 });
 ```
 
-This solves the need for creating data validation methods on each route that expects a body, since the validation can take place within the schema. It also returns the data in the expected type, reducing opportunity for malformed requests to cause errors with type-specific operations.
+This solves the need for creating data validation methods on each route that expects a body, since the validation can take place within the schema. By returning the data in the expected type, it reduces opportunity for malformed requests to cause errors with type-specific operations. It also improves performance by "offloading validation and serialization to the framework" (Nirnejak, 2023).
 
-- https://www.inkoop.io/blog/express-vs-fastify-in-depth-comparison-of-node-js-frameworks/
-- https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/
-- https://www.npmjs.com/package/ajv
-- https://ajv.js.org/coercion.html
+#### References
+
+- AJV JSON Schema Validator (n.d.). Ajv JSON Schema Validator. [online] ajv.js.org. Available at: https://ajv.js.org/coercion.html [Accessed 10 Dec. 2023].
+
+- Fastify (n.d.). Validation-and-Serialization | Fastify. [online] fastify.dev. Available at: https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/ [Accessed 10 Dec. 2023].
+
+- Nirnejak, J. (2023). Express.js vs Fastify - In-Depth Comparison of the Frameworks. [online] www.inkoop.io. Available at: https://www.inkoop.io/blog/express-vs-fastify-in-depth-comparison-of-node-js-frameworks/ [Accessed 10 Dec. 2023].
 
 ## Server Language Features
 
 ### Asynchronous Code Execution
 
-With the Node.js runtime, cumbersome tasks that may block the single thread that JavaScript executes upon
-can utilise concepts such as async/await to run on another thread. These tasks are handled by the libuv api, which processes them and stores the callback within the event queue (Hu, 2022). Once the callstack for the JavaScript thread is empty, the event loop will pick up the the callback and add it to the callstack to be executed.
+With the Node.js runtime, cumbersome tasks that may block the single thread that JavaScript executes upon can utilise concepts such as async/await to run on another thread. These tasks are handled by the libuv api, which processes them and stores the callback within the event queue (Hu, 2022). Once the callstack for the JavaScript thread is empty, the event loop will pick up the the callback and add it to the call stack to be executed (Devero, 2020).
 
 ```javascript
 let x = 1;
@@ -181,17 +181,14 @@ console.log(x); // Outputs 1 - GET functions are still executing, but they do no
 
 This prevents the delay in execution caused by methods that call external APIs, such as database queries, which would otherwise block the single thread until complete. This way, the server remains responsive during these methods, allowing it to accept simultaneous api requests, and respond to them in the order they are recieved. The above code snippet demonstrates this behaviour.
 
-- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop
-- https://dev.to/nodedoctors/an-animated-guide-to-nodejs-event-loop-3g62
+#### References
+
+- Devero, A. (2020). The JavaScript Event Loop Explained. [online] Alex Devero Blog. Available at: https://blog.alexdevero.com/javascript-event-loop/ [Accessed 9 Jan. 2024].
+- Hu, A. (2022). Node.js animated: Event Loop. [online] DEV Community. Available at: https://dev.to/nodedoctors/an-animated-guide-to-nodejs-event-loop-3g62 [Accessed 10 Dec. 2023].
 
 ### Mutability Control
 
-(Technical description of the feature - 40ish words)
-(A code block snippet example demonstrating the feature)
-(Explain the problem-this-is-solving/why/benefits/problems - 40ish words)
-(Provide reference urls to your sources of information about the feature - required)
-
-Variables in JavaScript have their mutability manually assigned at definition, using the `const` or `let` keywords. Constant variables' values are immutable and an error will be raised if an attempt to change them is made. The latter, declared by `let`, are mutable.
+Variables in JavaScript have their mutability manually assigned at definition, using the `const` or `let` keywords (McCullum, 2020). Constant variables' values are immutable and an error will be raised if an attempt to change them is made. The latter, declared by `let`, are mutable.
 
 ```javascript
 const x = 1; // Immutable
@@ -201,10 +198,13 @@ console.log(++y); // Outputs 2
 console.log(++x); // Throws TypeError: Assignment to constant variable
 ```
 
-Since immutable values cannot change, they help build more predictable and easy to debug code, whereas mutable values can be necessary for the code's function. Both have their place in making code more readable, and supporting both makes the language suitable for a wider range of projects.
+Since immutable values cannot change, they help build more predictable and easy to debug code by being able to "trace how and where data is changing" (Macdonald, 2021), whereas mutable values can be necessary for the code's function. Both have their place in making code more readable, and supporting both makes the language suitable for a wider range of projects. An issue with JavaScript's immutability is that objects' properties remain mutable, despite being defined by `const` (Nwankwo, 2023), although the `Object.freeze` can be used to prevent this.
 
-- https://www.nickmccullum.com/python-vs-javascript/#9-modules-and-libraries
-- https://www.freecodecamp.org/news/mutability-vs-immutability-in-javascript/
+#### References
+
+- Macdonald, M. (2021). Immutable Vs mutable: Definitions, Benefits & Practical Tips. [online] Blog by Tiny. Available at: https://www.tiny.cloud/blog/mutable-vs-immutable-javascript/ [Accessed 9 Jan. 2024].
+- McCullum, N. (2020). Python vs. JavaScript: The 11 Major Differences. [online] www.nickmccullum.com. Available at: https://www.nickmccullum.com/python-vs-javascript/#6-mutability [Accessed 9 Jan. 2024].
+- Nwankwo, C. (2023). Mutability vs Immutability in JavaScript – Explained with Code Examples. [online] freeCodeCamp.org. Available at: https://www.freecodecamp.org/news/mutability-vs-immutability-in-javascript/#constimmutability [Accessed 9 Jan. 2024].
 
 ## Client Framework Features
 
@@ -222,6 +222,7 @@ Components are custom UI elements that contain their own markup, run their own l
 <!--  -->
 <p>Value: {value}</p>
 ```
+
 ```html
 <!-- +page.svelte -->
 <script>
@@ -233,15 +234,17 @@ Components are custom UI elements that contain their own markup, run their own l
 <!-- Compiles to: <p>Value: 10</p> -->
 ```
 
-The framework makes these reusable elements easy to make, significantly reducing code repitition and improving code readability. The modular nature of components also allow easier debugging and maintenance since all logic and markup is in one file.
+The framework makes these reusable elements easy to make, significantly reducing code repetition and improving code readability. The modular nature of components also allow easier debugging and maintenance since all logic and markup is in one file.
 
-- https://svelte.dev/docs/svelte-components
+#### References
+
+- Svelte.dev (n.d.). Svelte components • Docs • Svelte. [online] svelte.dev. Available at: https://svelte.dev/docs/svelte-components [Accessed 3 Jan. 2024].
 
 ### Logic blocks
 
 Svelte provides `if`, `each`, `await`, and `key` logic blocks to perform logical operations in the page markup, which HTML alone does not support. `if` allows for conditions, `each` allows for iteration, `await` allows for conditionals for promise states (Carvajal, 2022), and `key` recreates components upon variable changes (Svelte.dev, n.d.). Unlike other frameworks like React that use embedded JavaScript for logic, Svelte compiles the template into "highly optimized JavaScript" (Codingballad, 2023) to reduce the amount of runtime work in for the browser.
 
-```html
+```svelte
 <script>
 	let x = true;
 	const list = ["a", "b", "c"];
@@ -283,12 +286,6 @@ All of the logic blocks reduce the code footprint, giving developers more time t
 
 ### Reactivity
 
-(Technical description of the feature - 40ish words)
-(A code block snippet example demonstrating the feature)
-(Explain the problem-this-is-solving/why/benefits/problems - 40ish words)
-(Provide reference urls to your sources of information about the feature - required)
-
-
 ```
 Unlike React, you don't have to declare data changes (i.e., by calling this.setState or the Hooks equivalent) [link](https://blog.logrocket.com/truly-reactive-programming-with-svelte-3-0-321b49b75969/). In Svelte, variables are reactive and are updated via assignment. Using the equals operator on a variable updates the state. This reduces the code footprint.
 Svelte code is compiled topologically (above reference)
@@ -303,14 +300,14 @@ Reactivity allows for dynamic element values. Unlike most other frameworks that 
 	// Mutable, thus reactive variable
 	let x = false;
 
-	function toggle(){
+	function toggle() {
 		// Assignment operation compiles to a call to the variable's update event.
 		x = !x;
 	}
 </script>
 
 <p>X = {x}</p>
-<button on:click={toggle}>Toggle</button>
+<button on:click="{toggle}">Toggle</button>
 
 <!-- Renders to:
 <p>X = false</>
@@ -320,24 +317,25 @@ When the button is clicked, the DOM updates to:
 -->
 ```
 
-The significantly smaller code footprint that reactivity brings reduces development time, particularly for applications that deal with data and user interaction. Removing the need to declare data changes attributes to this. The amount of boilerplate that a developer has to write to implement automatic DOM updates in Svelte is next to none, giving more time to focus on the features themselves.
+The significantly smaller code footprint that reactivity brings reduces development time, particularly for applications that deal with data and user interaction. Removing the need to declare data changes contributes to this. The amount of boilerplate that a developer has to write to implement automatic DOM updates in Svelte is next to none, giving more time to focus on the features themselves. In larger projects, due to reactive statement's dependencies needing to be explicit (Hagoel, 2021), workarounds may be necessary for these statements to work as intended.
+
+#### References
+
+- Klepov, V. (2023). Svelte Reactivity — an inside and out Guide. [online] Vladimir Klepov as a Coder. Available at: https://blog.thoughtspile.tech/2023/04/22/svelte-state/ [Accessed 8 Jan. 2024].
+- Okeh, O. (2019). Truly Reactive Programming with Svelte 3.0. [online] LogRocket Blog. Available at: https://blog.logrocket.com/truly-reactive-programming-with-svelte-3-0-321b49b75969/ [Accessed 8 Jan. 2024].
+- Hagoel, I. (2021). Svelte Reactivity Gotchas + Solutions. [online] DEV Community. Available at: https://dev.to/isaachagoel/svelte-reactivity-gotchas-solutions-if-you-re-using-svelte-in-production-you-should-read-this-3oj3 [Accessed 9 Jan. 2024].
 
 ## Client Language Features
 
 ### DOM Manipulation
 
-(Technical description of the feature - 40ish words)
-(A code block snippet example demonstrating the feature)
-(Explain the problem-this-is-solving/why/benefits/problems - 40ish words)
-(Provide reference urls to your sources of information about the feature - required)
-
 Since JavaScript runs on the browser, it has direct access to the Document Object Model (DOM) through the DOM API (MDN, 2023). This allows JavaScript to manipulate DOM elements, creating, modifying, and deleting them.
 
 ```js
 // Access the DOM with the document property
-const newElement = document.createElement('div');
+const newElement = document.createElement("div");
 // Add some text to the element
-newElement.textContent = 'New element';
+newElement.textContent = "New element";
 // Add the element to the document's body
 document.body.appendChild(newElement);
 
@@ -346,16 +344,30 @@ document.body.appendChild(newElement);
 */
 ```
 
-All major browsers support JavaScript, some exclusively, so other languages result to compiling into JavaScript when making client applications. By being able to modify the document directly, this extra compilation step is not necessary, therefore saving development time. It also prevents the need to understand two languages to build web applications, since JavaScript is the standard.
+All major browsers support JavaScript, some exclusively, so other languages result to compiling into JavaScript when making client applications. By being able to modify the document directly, this extra compilation step is not necessary, therefore saving development time. It also prevents the need to understand two languages to build web applications, since JavaScript is the standard. **this needs work**
 
 **NEEDS REFERENCES**
+maybe look at this https://www.digitalocean.com/community/tutorial-series/understanding-the-dom-document-object-model
 
 ### Arrow Functions
 
-(Technical description of the feature - 40ish words)
-(A code block snippet example demonstrating the feature)
-(Explain the problem-this-is-solving/why/benefits/problems - 40ish words)
-(Provide reference urls to your sources of information about the feature - required)
+Arrow functions are a shorthand syntax for declaring anonymous functions. They support implicit returns where the "statement is straightforward" (Arianna, 2022), and explicit returns for multi-line expressions. Arrow functions have "lexical this" (Rascia, 2021), in which they share the `this` scope of the level above themselves.
+
+```js
+// Implicit return
+let sum = (a, b) => a + b;
+// Explicit return
+sum = (a, b) => {
+	return a + b;
+};
+```
+
+Arrow functions are particularly useful as callback functions and in iterator methods (Arianna, 2022) that require a function parameter due to their shortened syntax. This produces more readable and efficiently typed code, as opposed to declaring named functions for miniscule operations. They do have limitations; they are not suitable for object methods due to their lexical scoping (Rascia, 2021), and their anonymous nature can add complexity to debugging. However, for the reasons mentioned, they can reduce the time it takes a developer to understand how the code works.
+
+#### References
+
+- Arianna, J. (2022). Guide to Arrow Functions in JavaScript. [online] Medium. Available at: https://towardsdev.com/guide-to-arrow-functions-in-javascript-647394230c66 [Accessed 8 Jan. 2024].
+- Rascia, T. (2021). Understanding Arrow Functions in JavaScript | DigitalOcean. [online] www.digitalocean.com. Available at: https://www.digitalocean.com/community/tutorials/understanding-arrow-functions-in-javascript.
 
 ## Conclusions
 
@@ -372,4 +384,3 @@ Maybe discuss WebAssembly here ^
 **QUESTIONS:**
 
 - Can I cite documentation such as mdn docs
-
